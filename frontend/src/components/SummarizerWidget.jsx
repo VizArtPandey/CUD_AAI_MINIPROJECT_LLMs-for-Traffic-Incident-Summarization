@@ -118,18 +118,6 @@ export default function SummarizerWidget({
 
   return (
     <div className="w-full">
-      <div className="mb-6 space-y-4">
-        <span className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-orange-600 dark:border-orange-500/40 dark:bg-orange-500/10 dark:text-orange-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-orange-500"></span> AI-powered traffic intelligence
-        </span>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-          Turn Traffic Chaos <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500">into Clarity</span>
-        </h1>
-        <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-2xl font-medium">
-          Paste raw incident reports and instantly get AI-distilled summaries from state-of-the-art models. Check the split-view output above.
-        </p>
-      </div>
-
       <div className="rounded-[24px] border border-slate-200 bg-white/70 shadow-2xl backdrop-blur-xl dark:border-slate-800 dark:bg-[#0d1326]/60">
         
         {/* Input and Output Split Area */}
