@@ -1,0 +1,1 @@
+DEFAULT_SUMMARY_GUIDANCE = "Summarize the traffic incident report in a concise factual style. Include the event, road or location context if present, and operational consequence. Do not invent missing details."

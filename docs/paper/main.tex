@@ -1,0 +1,17 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\begin{document}
+\title{Transformer-Based Abstractive Summarization for Traffic Incident Reports: Comparative Evaluation of BART, Flan-T5, PEGASUS, and Extractive Baselines}
+\author{Rajeev Ranjan Pandey}
+\maketitle
+\begin{abstract}
+This project evaluates extractive and abstractive summarization methods for traffic incident reports using a large U.S. narrative corpus and a GCC regional track derived from structured traffic records tied to Dubai Pulse, Abu Dhabi open data, and UAE federal road-safety statistics. The GCC records are normalized into a common schema and transformed into operator-style narrative descriptions to enable summarization experiments in a regional smart-mobility context.\end{abstract}
+\section{Dataset Note}
+The U.S. Accidents dataset provides large-scale narrative descriptions. GCC public sources more often provide structured records, portal-based feeds, or JavaScript dashboards rather than directly downloadable narrative incident text. To preserve reproducibility, this project bundles normalized sample extracts aligned to official source references and converts those records into narrative incident descriptions through a rule-based generator.
+\section{Demo Note}
+The React frontend includes a GCC-aware dataset toggle and polished output cards for poster-quality screenshots.
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

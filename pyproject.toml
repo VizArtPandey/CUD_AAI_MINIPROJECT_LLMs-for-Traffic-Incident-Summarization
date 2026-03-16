@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "traffic-incident-summarization"
+version = "0.1.0"
+description = "Comparative summarization of traffic incident reports with transformer and extractive baselines"
+requires-python = ">=3.11"
+authors = [{name = "Rajeev Ranjan Pandey"}]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

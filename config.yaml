@@ -1,0 +1,91 @@
+project:
+  name: "traffic-incident-summarization"
+  random_seed: 42
+
+paths:
+  raw_csv: "data/raw/US_Accidents_March23.csv"
+  cleaned_csv: "data/interim/cleaned_incidents.csv"
+  experiment_sample_csv: "data/interim/experiment_sample.csv"
+  eval_candidates_csv: "data/interim/eval_candidates.csv"
+  eval_set_csv: "data/processed/eval_set_with_refs.csv"
+  model_outputs_csv: "data/processed/model_outputs.csv"
+  aggregate_metrics_csv: "data/processed/aggregate_metrics.csv"
+  gcc_dir: "data/raw/gcc"
+  gcc_manifest_csv: "data/raw/gcc/source_manifest.csv"
+  gcc_combined_structured_csv: "data/interim/gcc_structured_combined.csv"
+  gcc_narratives_csv: "data/interim/gcc_narratives.csv"
+  combined_corpus_csv: "data/interim/combined_incident_corpus.csv"
+
+dataset:
+  kaggle_handle: "sobhanmoosavi/us-accidents"
+  expected_filename: "US_Accidents_March23.csv"
+  auto_download: true
+
+gcc:
+  enabled: true
+  include_in_combined_corpus: true
+  narrative_rows_per_source: 250
+  default_country: "United Arab Emirates"
+  source_priority:
+    - "dubai_pulse_incidents"
+    - "uae_federal_traffic_stats"
+    - "abu_dhabi_open_data"
+  sources:
+    dubai_pulse_incidents:
+      label: "Dubai Pulse Traffic Incidents"
+      official_url: "https://www.dubaipulse.gov.ae/data/dp-traffic/dp_traffic_incidents-open"
+      access_type: "open-data-portal"
+      local_sample_csv: "data/raw/gcc/dubai_pulse_incidents_sample.csv"
+      status: "bundled_sample"
+      notes: "Real-time Dubai Police incident feed surfaced through Dubai Pulse. The bundled CSV is a normalized local sample schema for immediate demo use."
+    uae_federal_traffic_stats:
+      label: "UAE Federal Traffic Statistics"
+      official_url: "https://uaestat.fcsc.gov.ae/vis?df%5Bag%5D=FCSA&df%5Bds%5D=FCSC-RDS&df%5Bid%5D=DF_TRA_TYPE&df%5Bvs%5D=3.0.0"
+      access_type: "web-statistics-portal"
+      local_sample_csv: "data/raw/gcc/uae_federal_traffic_stats_sample.csv"
+      status: "bundled_sample"
+      notes: "Federal accident indicators by emirate and accident type. The bundled CSV is a narrative-ready extracted sample schema."
+    abu_dhabi_open_data:
+      label: "Abu Dhabi Open Data"
+      official_url: "https://data.abudhabi/opendata/dataset"
+      access_type: "open-data-catalog"
+      local_sample_csv: "data/raw/gcc/abu_dhabi_incidents_sample.csv"
+      status: "bundled_sample"
+      notes: "Abu Dhabi open data catalog entry point. The bundled CSV is a normalized road incident sample for regional coverage."
+
+data:
+  text_column: "Description"
+  min_chars: 50
+  max_chars: 1500
+  experiment_sample_size: 3000
+  eval_candidate_size: 300
+  gcc_eval_candidate_size: 120
+  deduplicate: true
+  stratify_by:
+    - "Severity"
+
+generation:
+  default_max_input_tokens: 512
+  default_max_new_tokens: 96
+  default_min_new_tokens: 20
+  num_beams: 4
+  length_penalty: 1.0
+  no_repeat_ngram_size: 3
+  early_stopping: true
+
+models:
+  bart_large_cnn:
+    hf_name: "facebook/bart-large-cnn"
+    enabled: true
+    prompt_prefix: ""
+    max_input_tokens: 512
+  flan_t5_small:
+    hf_name: "google/flan-t5-small"
+    enabled: true
+    prompt_prefix: "summarize: "
+    max_input_tokens: 512
+  pegasus_cnn:
+    hf_name: "google/pegasus-cnn_dailymail"
+    enabled: false
+    prompt_prefix: ""
+    max_input_tokens: 512
