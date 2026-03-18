@@ -7,20 +7,23 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from src.data.utils import load_config
 
 # ── Per-model instruction prefixes ────────────────────────────────────────────
-# Prepended to raw incident text so models rewrite instead of echo.
+# Changed prompting to be highly professional, requesting a "classy",
+# high-impact executive tone suitable for official intelligence reports.
 _MODEL_PROMPTS: dict[str, str] = {
     "bart_large_cnn": (
-        "Generate a concise traffic incident summary. "
-        "Report only: location, incident type, severity, and road impact. "
-        "Be brief. Incident report: "
+        "Re-write the following traffic event into a highly professional executive "
+        "incident brief. Focus on creating an impactful, formal summary highlighting "
+        "severity and operational disruption: "
     ),
     "flan_t5_small": (
-        "Write a one-sentence traffic incident summary covering location, "
-        "incident type, severity level, and road impact in under 35 words. "
-        "Traffic report: "
+        "Task: Create a professional, high-impact Executive Traffic Intelligence Brief "
+        "from the following incident. Emphasize severity, exact location, and direct "
+        "consequences in a formal tone. "
+        "Incident details: "
     ),
     "pegasus_cnn": (
-        "Summarize the key facts from this traffic incident in one compact sentence: "
+        "Generate a formal, impactful Traffic Intelligence Report summarizing the key "
+        "operational facts from this incident: "
     ),
 }
 
@@ -55,7 +58,7 @@ def build_generation_config(model_name: str, config_path: str = "config.yaml"):
         min_new_tokens=gen_cfg["default_min_new_tokens"],
         max_new_tokens=gen_cfg["default_max_new_tokens"],
         num_beams=gen_cfg["num_beams"],
-        length_penalty=gen_cfg["length_penalty"],
+        length_penalty=1.0,  # Reverted length_penalty to 1.0 (defaults) for natural flow
         no_repeat_ngram_size=gen_cfg["no_repeat_ngram_size"],
         early_stopping=gen_cfg["early_stopping"],
         prompt_prefix=model_cfg.get("prompt_prefix", ""),
@@ -73,10 +76,9 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
     encoded = tokenizer(source_text, truncation=True, max_length=gen.max_input_tokens, return_tensors="pt")
     encoded = {k: v.to(get_device()) for k, v in encoded.items()}
 
-    # Dynamic cap: limit output to 50 % of raw input token count to force compression.
-    raw_len = tokenizer(clean_text, return_tensors="pt")["input_ids"].shape[-1]
-    dynamic_max = max(gen.min_new_tokens, min(int(raw_len * 0.50), gen.max_new_tokens))
-    actual_max_tokens = max_new_tokens or dynamic_max
+    # Limit to max_tokens configured. The previous dynamic strict limit forced the models
+    # to behave weirdly or copy, instead let the model use its own stopping logic.
+    actual_max_tokens = max_new_tokens or gen.max_new_tokens
 
     with torch.inference_mode():
         output_ids = model.generate(
@@ -84,11 +86,21 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
             min_new_tokens=gen.min_new_tokens,
             max_new_tokens=actual_max_tokens,
             num_beams=gen.num_beams,
-            length_penalty=3.0,     # strongly prefers concise outputs
-            no_repeat_ngram_size=4, # blocks 4-gram copying from input
+            length_penalty=gen.length_penalty,
+            no_repeat_ngram_size=gen.no_repeat_ngram_size,
             early_stopping=True,
         )
     output_text = " ".join(tokenizer.decode(output_ids[0], skip_special_tokens=True).split())
+
+    # Strip the instruction template echo
+    for prefix in _MODEL_PROMPTS.values():
+        if output_text.lower().startswith(prefix.replace("Task: ", "").lower().strip()[:20]):
+            output_text = output_text[len(prefix):].strip()
+
+    # Generic stripping of prefixes the models sometimes generate
+    output_text = output_text.replace("Executive Incident Brief:", "")
+    output_text = output_text.replace("Traffic Intelligence Report:", "")
+    output_text = output_text.replace("Incident report:", "")
 
     # Strip known hallucinations
     hallucinations = [
@@ -102,7 +114,6 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
         output_text = output_text.replace(h, "").strip()
 
     return " ".join(output_text.split())
-
 
 def available_abstractive_models(config_path: str = "config.yaml") -> List[str]:
     cfg = load_config(config_path)

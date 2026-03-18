@@ -13,7 +13,11 @@ const FALLBACK_TEXT = {
 };
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    // Apply immediately — before first paint — so dark: variants work on load
+    document.documentElement.classList.add("dark");
+    return true;
+  });
   const [datasetTrack, setDatasetTrack] = useState("gcc");
   const [text, setText] = useState(FALLBACK_TEXT.gcc);
   const [modelChoice, setModelChoice] = useState("bart_large_cnn");
@@ -29,9 +33,9 @@ export default function Home() {
   useEffect(() => { datasetTrackRef.current = datasetTrack; }, [datasetTrack]);
   useEffect(() => { modelChoiceRef.current = modelChoice; }, [modelChoice]);
 
+  // Keep dark class in sync when user toggles
   useEffect(() => {
-    if (isDark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
   useEffect(() => {
