@@ -116,7 +116,7 @@ export default function SummarizerWidget({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] shadow-sm dark:shadow-2xl flex-1 flex flex-col">
+      <div className="rounded-2xl border border-slate-300 dark:border-white/[0.07] bg-white dark:bg-[#0d1326] shadow-sm dark:shadow-2xl flex-1 flex flex-col">
         
         {/* Input and Output Split Area */}
         <div className="grid gap-0 lg:grid-cols-2 flex-1">
@@ -158,7 +158,7 @@ export default function SummarizerWidget({
              <div className="flex flex-col custom-scroll">
                 {summary ? (
                     <>
-                      <p className="text-[15px] leading-[1.85] text-slate-800 dark:text-slate-100 whitespace-pre-wrap">{summary.replace(/<n>/gi, '\n\n').replace(/[ \t]+/g, ' ').trim()}</p>
+                      <p className="text-lg leading-[1.85] text-slate-800 dark:text-slate-100 whitespace-pre-wrap">{summary.replace(/<n>/gi, '\n\n').replace(/[ \t]+/g, ' ').trim()}</p>
                       {extractedTags.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-1.5">
                           {extractedTags.map((tag, idx) => (

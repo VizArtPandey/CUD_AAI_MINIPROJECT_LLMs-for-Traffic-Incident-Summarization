@@ -84,9 +84,9 @@ export default function Home() {
             <span className="font-black text-base tracking-tight text-slate-900 dark:text-white uppercase">Traffic</span>
             <span className="text-orange-400 font-black text-base uppercase">Intel</span>
           </div>
-          <span className="hidden sm:inline-flex ml-2 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400">
-            LLM Summarization Demo
-          </span>
+          <div className="hidden sm:flex flex-col ml-2 justify-center">
+            <span className="text-[9px] font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500">CUD · AAI Midterm Project</span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden md:flex items-center gap-1.5 text-xs font-medium text-slate-500">
@@ -107,11 +107,7 @@ export default function Home() {
 
         {/* Hero Banner */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-orange-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-orange-500 dot-glow"></span>
-              CUD · AAI Midterm Project
-            </span>
+          <div className="space-y-2">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               Turn Traffic Chaos{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400">
@@ -128,7 +124,7 @@ export default function Home() {
               { label: "GCC Samples", value: "250+" },
               { label: "US Records",  value: "5K+"  }
             ].map(s => (
-              <div key={s.label} className="text-center bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/[0.06] rounded-xl px-5 py-3">
+              <div key={s.label} className="text-center bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/[0.07] rounded-xl px-5 py-3">
                 <div className="text-2xl font-black text-slate-900 dark:text-white">{s.value}</div>
                 <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-500">{s.label}</div>
               </div>
@@ -137,7 +133,7 @@ export default function Home() {
         </div>
 
         {/* 3-Column Main Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px_300px] gap-5 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px_300px] gap-5 items-stretch border-t border-slate-200 dark:border-white/[0.05] pt-6">
 
           {/* Column 1: Main Summarizer Widget */}
           <div className="h-full min-h-0">
@@ -154,7 +150,7 @@ export default function Home() {
 
           {/* Column 2: Dataset Preview */}
           <div className="h-full flex flex-col min-h-0">
-            <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] shadow-sm dark:shadow-2xl flex flex-col flex-1 overflow-hidden">
+            <div className="rounded-2xl border border-slate-300 dark:border-white/[0.07] bg-white dark:bg-[#0d1326] shadow-sm dark:shadow-2xl flex flex-col flex-1 overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-slate-100 dark:border-white/[0.05]">
                 <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-400">Dataset Preview</h3>
                 <span className="rounded-full bg-slate-100 dark:bg-white/5 px-3 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.08]">

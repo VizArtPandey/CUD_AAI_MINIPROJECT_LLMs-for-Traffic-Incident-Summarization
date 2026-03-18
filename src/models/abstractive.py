@@ -49,21 +49,26 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
     source_text = f"{gen.prompt_prefix}{' '.join(str(text).split())}"
     encoded = tokenizer(source_text, truncation=True, max_length=gen.max_input_tokens, return_tensors="pt")
     encoded = {k: v.to(get_device()) for k, v in encoded.items()}
-    actual_max_tokens = max_new_tokens or gen.max_new_tokens
-    actual_min_tokens = gen.min_new_tokens
-    
+
+    # Dynamically cap max_new_tokens at 55 % of input length to enforce compression.
+    # This prevents the model from echoing short inputs verbatim.
+    input_len = encoded["input_ids"].shape[-1]
+    dynamic_max = max(gen.min_new_tokens, min(int(input_len * 0.55), gen.max_new_tokens))
+    actual_max_tokens = max_new_tokens or dynamic_max
+
     with torch.inference_mode():
         output_ids = model.generate(
             **encoded,
-            min_new_tokens=actual_min_tokens,
+            min_new_tokens=gen.min_new_tokens,
             max_new_tokens=actual_max_tokens,
             num_beams=gen.num_beams,
-            length_penalty=gen.length_penalty,
-            no_repeat_ngram_size=gen.no_repeat_ngram_size,
-            early_stopping=bool(gen.early_stopping),
+            length_penalty=2.0,          # strongly prefers shorter outputs
+            no_repeat_ngram_size=4,      # blocks 4-gram repetition / copy
+            early_stopping=True,
         )
     output_text = " ".join(tokenizer.decode(output_ids[0], skip_special_tokens=True).split())
-    # Post-processing filters for common model hallucinations
+
+    # Post-processing: strip known hallucinations
     hallucinations = [
         "For confidential support call the Samaritans in the UK on 08457 90 90 90, visit a local Samaritans branch or click here for details.",
         "For confidential support call the Samaritans",
@@ -73,7 +78,9 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
     ]
     for h in hallucinations:
         output_text = output_text.replace(h, "").strip()
+
     return " ".join(output_text.split())
+
 
 def available_abstractive_models(config_path: str = "config.yaml") -> List[str]:
     cfg = load_config(config_path)

@@ -7,7 +7,7 @@ export default function DatasetToggle({ value, onChange }) {
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] p-5 shadow-sm dark:shadow-xl">
+    <div className="rounded-2xl border border-slate-300 dark:border-white/[0.07] bg-white dark:bg-[#0d1326] p-5 shadow-sm dark:shadow-xl">
       <div className="flex items-center gap-2 mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
         <Database size={12}/> Analysis Dataset
       </div>
