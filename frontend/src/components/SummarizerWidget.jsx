@@ -170,7 +170,7 @@ export default function SummarizerWidget({
                       )}
                     </>
                 ) : (
-                    <div className="h-full flex-1 flex items-center justify-center text-sm font-medium text-slate-600 italic">
+                    <div className="h-full flex-1 flex items-center justify-center text-sm font-medium text-slate-400 dark:text-slate-600 italic">
                        {loading ? "Generating summary..." : "No summary generated yet."}
                     </div>
                 )}
@@ -179,13 +179,13 @@ export default function SummarizerWidget({
                 <div className="mt-5 flex flex-wrap gap-3 border-t border-white/5 pt-4">
                   <button
                     onClick={handleCopy}
-                    className="flex-1 flex justify-center items-center gap-2 rounded-xl bg-white/8 hover:bg-white/12 py-3 text-sm font-bold text-white transition border border-white/10"
+                    className="flex-1 flex justify-center items-center gap-2 rounded-xl bg-slate-100 dark:bg-white/8 hover:bg-slate-200 dark:hover:bg-white/12 py-3 text-sm font-bold text-slate-700 dark:text-white transition border border-slate-200 dark:border-white/10"
                   >
                     {copied ? <CheckCircle2 size={16}/> : <Copy size={16} />} {copied ? "Copied" : "Copy Summary"}
                   </button>
                   <button
                     onClick={() => downloadTextFile(`summary_${modelChoice}.txt`, summary)}
-                    className="flex-1 flex justify-center items-center gap-2 rounded-xl border border-white/10 bg-transparent py-3 text-sm font-bold text-slate-300 transition hover:bg-white/5"
+                    className="flex-1 flex justify-center items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-transparent py-3 text-sm font-bold text-slate-600 dark:text-slate-300 transition hover:bg-white/5"
                   >
                     <Download size={16} /> Save
                   </button>
@@ -201,7 +201,7 @@ export default function SummarizerWidget({
         <div className="p-4 md:p-6 space-y-5">
             {/* Model Selection */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Model</h3>
+              <h3 className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest">Select Model</h3>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {MODELS.map((model) => {
@@ -231,12 +231,12 @@ export default function SummarizerWidget({
                            </div>
                         </div>
                       </div>
-                      <h4 className="text-base font-bold text-white mb-1.5">{model.name}</h4>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white mb-1.5">{model.name}</h4>
                       <span className={`inline-block rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${model.badgeColor}`}>
                         {model.badgeLabel}
                       </span>
                       <div className="mt-4 flex w-full items-center justify-between">
-                        <span className="text-[10px] font-semibold text-slate-600">Speed</span>
+                        <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-600">Speed</span>
                         <div className="flex gap-1">
                           {[1, 2, 3].map((i) => (
                             <div key={i} className={`h-1.5 w-5 rounded-full ${i <= model.speed ? 'bg-orange-500' : 'bg-white/10'}`} />

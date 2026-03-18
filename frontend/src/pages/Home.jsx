@@ -124,13 +124,13 @@ export default function Home() {
           </div>
           <div className="flex gap-6 shrink-0">
             {[
-              { label: "Models", value: "4" },
+              { label: "Models",      value: "4"    },
               { label: "GCC Samples", value: "250+" },
-              { label: "US Records", value: "5K+" }
+              { label: "US Records",  value: "5K+"  }
             ].map(s => (
-              <div key={s.label} className="text-center">
-                <div className="text-2xl font-black text-white">{s.value}</div>
-                <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500">{s.label}</div>
+              <div key={s.label} className="text-center bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/[0.06] rounded-xl px-5 py-3">
+                <div className="text-2xl font-black text-slate-900 dark:text-white">{s.value}</div>
+                <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-500">{s.label}</div>
               </div>
             ))}
           </div>
@@ -154,10 +154,10 @@ export default function Home() {
 
           {/* Column 2: Dataset Preview */}
           <div className="h-full flex flex-col min-h-0">
-            <div className="rounded-2xl border border-white/[0.06] bg-[#0d1326] shadow-2xl flex flex-col flex-1 overflow-hidden">
-              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-white/5">
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Dataset Preview</h3>
-                <span className="rounded-full bg-white/5 px-3 py-1 text-[11px] font-bold text-slate-400 border border-white/8">
+            <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] shadow-sm dark:shadow-2xl flex flex-col flex-1 overflow-hidden">
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-slate-100 dark:border-white/[0.05]">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-400">Dataset Preview</h3>
+                <span className="rounded-full bg-slate-100 dark:bg-white/5 px-3 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.08]">
                   {samples.length} Samples
                 </span>
               </div>
