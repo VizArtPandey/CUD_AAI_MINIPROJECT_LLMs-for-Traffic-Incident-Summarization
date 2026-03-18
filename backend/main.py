@@ -5,6 +5,8 @@ from pathlib import Path
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.app.schemas import (
     CompareRequest,
@@ -160,3 +162,21 @@ def compare(request: CompareRequest):
         return CompareResponse(dataset_track=request.dataset_track, items=items)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+# ── Serve React Frontend (Single-Container Deployment e.g., Hugging Face) ──
+_DIST_PATH = Path(__file__).parent.parent / "frontend" / "dist"
+
+if _DIST_PATH.exists() and _DIST_PATH.is_dir():
+    # Mount static assets first (CSS/JS files inside /assets)
+    app.mount("/assets", StaticFiles(directory=str(_DIST_PATH / "assets")), name="assets")
+
+    # Catch-all route for Single Page Application (React Router)
+    @app.get("/{full_path:path}", response_class=FileResponse)
+    async def serve_frontend(full_path: str):
+        # Prevent accessing files outside dist/
+        req_path = _DIST_PATH / full_path
+        if req_path.exists() and req_path.is_file():
+            return FileResponse(req_path)
+        # Otherwise, fall back to React's index.html
+        return FileResponse(_DIST_PATH / "index.html")
+
