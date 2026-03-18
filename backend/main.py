@@ -19,6 +19,14 @@ from src.app.services import summarize_with_model
 from src.data.prepare import prepare_dataset
 from src.data.utils import load_config
 
+
+def _safe_int(val) -> int | None:
+    """Safely cast a value to int, returning None on failure."""
+    try:
+        return int(float(val))
+    except Exception:
+        return None
+
 app = FastAPI(title="Traffic Incident Summarization API", version="0.4.0")
 app.add_middleware(
     CORSMiddleware,
@@ -62,7 +70,29 @@ def get_samples(track: str = "gcc"):
         df["Start_Time"] = pd.to_datetime(df["Start_Time"], errors="coerce")
         df = df.sort_values(by="Start_Time", ascending=False)
         
-    sample_df = df.head(10).copy()
+    # Pick one representative sample per severity level for a compact, diverse preview
+    sev_map_int = {1: "Low", 2: "Medium", 3: "High", 4: "Critical"}
+    severity_order = [3, 2, 4, 1]  # High, Medium, Critical, Low — most interesting first
+    seen_sevs: set = set()
+    selected_rows = []
+    if "Severity" in df.columns:
+        for sev_val in severity_order:
+            subset = df[df["Severity"].apply(
+                lambda x: _safe_int(x) == sev_val
+            )]
+            if not subset.empty:
+                selected_rows.append(subset.iloc[0])
+                seen_sevs.add(sev_val)
+    # Fill remaining slots up to 5 from rows not yet selected
+    used_indices = {r.name for r in selected_rows}
+    for _, row in df.iterrows():
+        if len(selected_rows) >= 5:
+            break
+        if row.name not in used_indices:
+            selected_rows.append(row)
+            used_indices.add(row.name)
+    sample_df = pd.DataFrame(selected_rows)
+
     items = []
     for idx, row in sample_df.iterrows():
         def clean(val):
@@ -80,8 +110,7 @@ def get_samples(track: str = "gcc"):
             if "severity" not in desc.lower():
                 try:
                     sev_int = int(float(sev))
-                    sev_map = {1: "Low", 2: "Medium", 3: "High", 4: "Critical"}
-                    sev_str = sev_map.get(sev_int, "Medium")
+                    sev_str = sev_map_int.get(sev_int, "Medium")
                     desc = f"{desc} Classified as {sev_str} severity."
                 except Exception:
                     pass
@@ -100,6 +129,7 @@ def get_samples(track: str = "gcc"):
             )
         )
     return SamplesResponse(items=items)
+
 
 
 @app.post("/summarize", response_model=SummarizeResponse)

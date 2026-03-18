@@ -50,7 +50,7 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
     encoded = tokenizer(source_text, truncation=True, max_length=gen.max_input_tokens, return_tensors="pt")
     encoded = {k: v.to(get_device()) for k, v in encoded.items()}
     actual_max_tokens = max_new_tokens or gen.max_new_tokens
-    actual_min_tokens = max(10, int(actual_max_tokens * 0.5)) if max_new_tokens else gen.min_new_tokens
+    actual_min_tokens = gen.min_new_tokens
     
     with torch.inference_mode():
         output_ids = model.generate(
@@ -58,11 +58,22 @@ def generate_summary(text: str, model_name: str, config_path: str = "config.yaml
             min_new_tokens=actual_min_tokens,
             max_new_tokens=actual_max_tokens,
             num_beams=gen.num_beams,
-            length_penalty=gen.length_penalty if not max_new_tokens else 2.0,
+            length_penalty=gen.length_penalty,
             no_repeat_ngram_size=gen.no_repeat_ngram_size,
             early_stopping=bool(gen.early_stopping),
         )
-    return " ".join(tokenizer.decode(output_ids[0], skip_special_tokens=True).split())
+    output_text = " ".join(tokenizer.decode(output_ids[0], skip_special_tokens=True).split())
+    # Post-processing filters for common model hallucinations
+    hallucinations = [
+        "For confidential support call the Samaritans in the UK on 08457 90 90 90, visit a local Samaritans branch or click here for details.",
+        "For confidential support call the Samaritans",
+        "The cause of the collision has not been determined",
+        "The incident is under investigation by Dubai Police.",
+        "The incident is currently under investigation and no further details have been released."
+    ]
+    for h in hallucinations:
+        output_text = output_text.replace(h, "").strip()
+    return " ".join(output_text.split())
 
 def available_abstractive_models(config_path: str = "config.yaml") -> List[str]:
     cfg = load_config(config_path)

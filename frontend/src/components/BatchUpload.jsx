@@ -1,20 +1,23 @@
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, Database } from "lucide-react";
 
-export default function BatchUpload() {
+export default function DatasetLoader() {
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[#0d1326] dark:shadow-xl relative overflow-hidden h-full">
-      <div className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600 dark:text-orange-400">Batch Processing</div>
-      <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1">Bulk Generation</h3>
-      <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-        Load custom evaluation datasets by uploading a CSV. The system expects a <span className="font-mono text-xs text-orange-600 bg-orange-50 px-1 py-0.5 rounded dark:text-orange-300 dark:bg-orange-500/10 dark:border dark:border-orange-500/20">Description</span> column to generate summaries in bulk for evaluation.
+    <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] p-5 shadow-sm dark:shadow-xl">
+      <div className="flex items-center gap-2 mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+        <Database size={12}/> Load Your Dataset
+      </div>
+      <p className="text-[11px] text-slate-500 dark:text-slate-500 mb-4 leading-relaxed">
+        Upload a CSV with an <span className="font-mono text-orange-500 bg-orange-500/10 px-1 rounded text-[10px]">Incident Description</span> column to run summarization on your own traffic incident data.
       </p>
-      
-      <div className="mt-6 flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center transition hover:border-orange-200 hover:bg-orange-50 cursor-pointer group dark:border-slate-700 dark:bg-slate-900/50 dark:hover:border-orange-500/50 dark:hover:bg-slate-800">
-        <div className="rounded-full bg-white border border-slate-200 p-3 text-slate-400 mb-3 group-hover:text-orange-500 group-hover:bg-orange-100 group-hover:border-orange-200 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:group-hover:text-orange-400 dark:group-hover:bg-orange-500/10 dark:group-hover:border-orange-500/30">
-            <UploadCloud size={24} />
+
+      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.02] p-5 text-center transition hover:border-orange-400 dark:hover:border-orange-500/40 hover:bg-orange-50 dark:hover:bg-orange-500/5 cursor-pointer group">
+        <div className="rounded-full bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] p-2.5 text-slate-400 dark:text-slate-500 mb-2 group-hover:text-orange-500 group-hover:bg-orange-100 dark:group-hover:bg-orange-500/10 dark:group-hover:border-orange-500/30 transition-colors">
+          <UploadCloud size={18} />
         </div>
-        <div className="text-sm font-bold text-slate-700 group-hover:text-orange-600 mb-1 dark:text-slate-300 dark:group-hover:text-white">Upload CSV or JSON Dataset</div>
-        <div className="text-xs text-slate-500">Supports .csv up to 50MB</div>
+        <div className="text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white mb-0.5 transition-colors">
+          Drop CSV file here
+        </div>
+        <div className="text-[10px] text-slate-400 dark:text-slate-600 font-medium">.csv only · max 50 MB</div>
       </div>
     </div>
   );

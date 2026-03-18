@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { fetchSamples, summarizeText } from "../api/client";
 import BatchUpload from "../components/BatchUpload";
 import DatasetToggle from "../components/DatasetToggle";
+import LiveMetrics from "../components/LiveMetrics";
 import SampleGallery from "../components/SampleGallery";
 import SummarizerWidget, { MODELS } from "../components/SummarizerWidget";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Zap } from "lucide-react";
 
 const FALLBACK_TEXT = {
   gcc: "A rear-end collision involving two vehicles was recorded on Sheikh Zayed Road in Dubai during the evening peak. The incident caused a temporary lane closure, minor injuries, and congestion extending into the surrounding corridor while responders managed the scene.",
@@ -16,29 +17,21 @@ export default function Home() {
   const [datasetTrack, setDatasetTrack] = useState("gcc");
   const [text, setText] = useState(FALLBACK_TEXT.gcc);
   const [modelChoice, setModelChoice] = useState("bart_large_cnn");
-  const [maxLength, setMaxLength] = useState(150);
   const [summary, setSummary] = useState("");
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Refs ensure that the latest state values are available to the async runSummarize function,
-  // preventing "stale closures" where the function uses old scale values.
   const textRef = useRef(text);
-  const maxLengthRef = useRef(maxLength);
   const datasetTrackRef = useRef(datasetTrack);
   const modelChoiceRef = useRef(modelChoice);
 
   useEffect(() => { textRef.current = text; }, [text]);
-  useEffect(() => { maxLengthRef.current = maxLength; }, [maxLength]);
   useEffect(() => { datasetTrackRef.current = datasetTrack; }, [datasetTrack]);
   useEffect(() => { modelChoiceRef.current = modelChoice; }, [modelChoice]);
 
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    if (isDark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   }, [isDark]);
 
   useEffect(() => {
@@ -59,23 +52,14 @@ export default function Home() {
   }, [datasetTrack]);
 
   const runSummarize = async (targetModelId) => {
-    // Determine which model to use: either the passed one (for direct clicks) or the state (for slider/button)
     const modelToUse = targetModelId || modelChoiceRef.current;
     const currentText = textRef.current;
-    const currentLength = maxLengthRef.current;
     const currentTrack = datasetTrackRef.current;
-
     if (!currentText || currentText.trim().length < 10) return;
-
     setLoading(true);
     setSummary("");
     try {
-      const data = await summarizeText({
-        text: currentText,
-        model_choice: modelToUse,
-        max_length: currentLength,
-        dataset_track: currentTrack
-      });
+      const data = await summarizeText({ text: currentText, model_choice: modelToUse, dataset_track: currentTrack });
       setSummary(data.summary);
     } catch (error) {
       setSummary(`Error: ${error?.response?.data?.detail || error.message}`);
@@ -84,67 +68,82 @@ export default function Home() {
     }
   };
 
-  // Main button trigger
-  const handleSummarize = (overrideLength = null) => {
-    if (overrideLength !== null) setMaxLength(overrideLength);
-    runSummarize();
-  };
-
-  // Model selection trigger
-  const handleModelSelect = (modelId) => {
-    setModelChoice(modelId);
-    runSummarize(modelId);
-  };
+  const handleSummarize = () => runSummarize();
+  const handleModelSelect = (modelId) => { setModelChoice(modelId); runSummarize(modelId); };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-[#0B1021] dark:text-slate-200 pb-16">
-      
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060d1f] text-slate-900 dark:text-slate-200 transition-colors duration-300 pb-16 dark:bg-grid">
+
       {/* Navbar */}
-      <header className="flex h-16 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-[#0B1021]/50 backdrop-blur-md sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded border-2 border-orange-500 bg-orange-100 dark:bg-orange-500/20"></div>
-            <span className="font-black text-lg tracking-tight uppercase">Traffic<span className="text-orange-500 font-normal">AI</span></span>
+      <header className="flex h-16 items-center justify-between px-8 border-b border-black/10 dark:border-white/5 bg-white/80 dark:bg-[#060d1f]/80 backdrop-blur-xl sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <div className="relative h-8 w-8 flex items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/30">
+            <Zap size={16} className="text-white" fill="white" />
+          </div>
+          <div className="flex items-baseline gap-0.5">
+            <span className="font-black text-base tracking-tight text-slate-900 dark:text-white uppercase">Traffic</span>
+            <span className="text-orange-400 font-black text-base uppercase">Intel</span>
+          </div>
+          <span className="hidden sm:inline-flex ml-2 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400">
+            LLM Summarization Demo
+          </span>
         </div>
-        <button 
-           onClick={() => setIsDark(!isDark)}
-           className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-400"
-        >
-          {isDark ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="hidden md:flex items-center gap-1.5 text-xs font-medium text-slate-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 dot-glow"></span>
+            Live Backend
+          </span>
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="p-2 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition border border-black/10 dark:border-white/10"
+          >
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        </div>
       </header>
 
-      <div className="mx-auto max-w-[1500px] px-4 pt-8">
-        
-        {/* Row 1: Top Aligned Hero and Dataset Toggle */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-12 items-end mb-8">
-          <div className="xl:col-span-8 xl:pl-4">
-             <div className="space-y-4">
-                <span className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-orange-600 dark:border-orange-500/40 dark:bg-orange-500/10 dark:text-orange-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange-500"></span> AI Traffic Summarization
-                </span>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                  Turn Traffic Chaos <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500">into Clarity</span>
-                </h1>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-2xl font-medium">
-                  Select a model below to generate instant summaries. The Dataset Preview on the right allows you to quickly load existing incident data.
-                </p>
-              </div>
+      {/* Main Content */}
+      <div className="w-full max-w-[1920px] mx-auto px-6 xl:px-10 pt-8">
+
+        {/* Hero Banner */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-orange-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-orange-500 dot-glow"></span>
+              CUD · AAI Midterm Project
+            </span>
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
+              Turn Traffic Chaos{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400">
+                into Clarity
+              </span>
+            </h1>
+            <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
+              Compare extractive &amp; abstractive LLM summarization methods on real-world traffic incident data from GCC and US datasets.
+            </p>
           </div>
-          <div className="xl:col-span-4 xl:pr-4 flex flex-col justify-end">
-             <DatasetToggle value={datasetTrack} onChange={setDatasetTrack} />
+          <div className="flex gap-6 shrink-0">
+            {[
+              { label: "Models", value: "4" },
+              { label: "GCC Samples", value: "250+" },
+              { label: "US Records", value: "5K+" }
+            ].map(s => (
+              <div key={s.label} className="text-center">
+                <div className="text-2xl font-black text-white">{s.value}</div>
+                <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500">{s.label}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Row 2: Parallel Grid of Cards */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
-          {/* Main Summarizer Section */}
-          <div className="xl:col-span-8 flex flex-col xl:pl-4">
-            <SummarizerWidget 
+        {/* 3-Column Main Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px_300px] gap-5 items-stretch">
+
+          {/* Column 1: Main Summarizer Widget */}
+          <div className="h-full min-h-0">
+            <SummarizerWidget
               text={text}
               setText={setText}
-              maxLength={maxLength}
-              setMaxLength={setMaxLength}
               modelChoice={modelChoice}
               setModelChoice={handleModelSelect}
               onSummarize={handleSummarize}
@@ -153,19 +152,26 @@ export default function Home() {
             />
           </div>
 
-          {/* Right Sidebar Section */}
-          <div className="xl:col-span-4 flex flex-col xl:pr-4 gap-8">
-            <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[#0d1326] dark:shadow-xl relative overflow-hidden">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Dataset Preview</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Select a sample to load it into the editor</p>
+          {/* Column 2: Dataset Preview */}
+          <div className="h-full flex flex-col min-h-0">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0d1326] shadow-2xl flex flex-col flex-1 overflow-hidden">
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-white/5">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Dataset Preview</h3>
+                <span className="rounded-full bg-white/5 px-3 py-1 text-[11px] font-bold text-slate-400 border border-white/8">
+                  {samples.length} Samples
+                </span>
               </div>
-              <div className="overflow-y-auto max-h-[600px] pr-2 -mr-2 space-y-4 custom-scroll">
+              <div className="overflow-y-auto flex-1 px-3 py-3 space-y-2 custom-scroll">
                 <SampleGallery items={samples} onPick={setText} />
               </div>
             </div>
-            
+          </div>
+
+          {/* Column 3: Controls */}
+          <div className="flex flex-col gap-5 h-full">
+            <DatasetToggle value={datasetTrack} onChange={setDatasetTrack} />
             <BatchUpload />
+            <LiveMetrics activeModel={modelChoice} />
           </div>
 
         </div>

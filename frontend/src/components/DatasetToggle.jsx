@@ -2,16 +2,16 @@ import { Check, Database } from "lucide-react";
 
 export default function DatasetToggle({ value, onChange }) {
   const options = [
-    { value: "gcc", label: "GCC / UAE", subtitle: "250+ Narrative Samples" },
-    { value: "us", label: "US Accidents", subtitle: "5,000+ Extracted Records" }
+    { value: "gcc", label: "GCC / UAE",   subtitle: "250+ Narrative Samples",    flag: "🇦🇪" },
+    { value: "us",  label: "US Accidents", subtitle: "5,000+ Extracted Records",  flag: "🇺🇸" }
   ];
 
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/50 dark:shadow-xl backdrop-blur">
-      <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-        <Database size={14}/> Analysis Dataset Track
+    <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#0d1326] p-5 shadow-sm dark:shadow-xl">
+      <div className="flex items-center gap-2 mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+        <Database size={12}/> Analysis Dataset
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="flex flex-col gap-3">
         {options.map((option) => {
           const isSelected = value === option.value;
           return (
@@ -19,23 +19,24 @@ export default function DatasetToggle({ value, onChange }) {
               key={option.value}
               type="button"
               onClick={() => onChange(option.value)}
-              className={`relative flex flex-col items-start rounded-2xl border-2 px-5 py-4 text-left transition-all duration-300 ${
+              className={`relative flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left transition-all duration-200 ${
                 isSelected
-                  ? "border-orange-500 bg-orange-50/50 shadow-[0_0_15px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/50 dark:bg-orange-500/10"
-                  : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:border-slate-700 dark:hover:bg-slate-800/80"
+                  ? "border-orange-500/60 bg-orange-500/10 shadow-[0_0_12px_rgba(249,115,22,0.10)]"
+                  : "border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03] hover:border-orange-300 dark:hover:border-white/15 hover:bg-orange-50 dark:hover:bg-white/[0.06]"
               }`}
             >
-              <div className="flex w-full items-center justify-between">
-                <span className={`text-lg font-bold ${isSelected ? "text-orange-600 dark:text-orange-400" : "text-slate-700 dark:text-slate-300"}`}>
+              <span className="text-xl leading-none">{option.flag}</span>
+              <div className="flex-1 min-w-0">
+                <span className={`block text-sm font-bold truncate ${isSelected ? "text-orange-600 dark:text-orange-300" : "text-slate-700 dark:text-slate-300"}`}>
                   {option.label}
                 </span>
-                <div className={`flex h-6 w-6 items-center justify-center rounded-full transition-transform duration-300 ${isSelected ? "scale-100 bg-orange-500 text-white dark:text-slate-900" : "scale-0 shadow-none border-0"}`}>
-                  <Check size={14} strokeWidth={3} />
-                </div>
+                <span className={`block text-[10px] font-medium uppercase tracking-widest mt-0.5 truncate ${isSelected ? "text-orange-500/80 dark:text-orange-400/70" : "text-slate-500 dark:text-slate-600"}`}>
+                  {option.subtitle}
+                </span>
               </div>
-              <span className={`mt-2 text-xs font-medium uppercase tracking-widest ${isSelected ? "text-orange-600/80 dark:text-orange-400/80" : "text-slate-500"}`}>
-                {option.subtitle}
-              </span>
+              <div className={`shrink-0 flex h-5 w-5 items-center justify-center rounded-full transition-all ${isSelected ? "bg-orange-500 scale-100" : "scale-0"}`}>
+                <Check size={11} strokeWidth={3} className="text-white" />
+              </div>
             </button>
           );
         })}

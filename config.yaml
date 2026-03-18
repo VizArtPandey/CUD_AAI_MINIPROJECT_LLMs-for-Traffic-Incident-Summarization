@@ -66,9 +66,9 @@ data:
 
 generation:
   default_max_input_tokens: 512
-  default_max_new_tokens: 96
-  default_min_new_tokens: 20
-  num_beams: 4
+  default_max_new_tokens: 72
+  default_min_new_tokens: 18
+  num_beams: 2
   length_penalty: 1.0
   no_repeat_ngram_size: 3
   early_stopping: true
