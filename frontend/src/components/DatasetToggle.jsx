@@ -1,15 +1,15 @@
-import { Check, Database } from "lucide-react";
+import { Check, BrainCircuit } from "lucide-react";
 
 export default function DatasetToggle({ value, onChange }) {
   const options = [
-    { value: "gcc", label: "GCC / UAE",   subtitle: "250+ Narrative Samples",    flag: "🇦🇪" },
-    { value: "us",  label: "US Accidents", subtitle: "5,000+ Extracted Records",  flag: "🇺🇸" }
+    { value: "gcc", label: "GCC / UAE",    subtitle: "250+ Narrative Samples",   flag: "🇦🇪" },
+    { value: "us",  label: "US Accidents", subtitle: "5,000+ Extracted Records", flag: "🇺🇸" }
   ];
 
   return (
     <div className="rounded-2xl border border-slate-300 dark:border-white/[0.07] bg-white dark:bg-[#0d1326] p-5 shadow-sm dark:shadow-xl">
       <div className="flex items-center gap-2 mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-        <Database size={12}/> Analysis Dataset
+        <BrainCircuit size={13} className="text-orange-500"/> Available Datasets
       </div>
       <div className="flex flex-col gap-3">
         {options.map((option) => {

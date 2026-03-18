@@ -223,11 +223,13 @@ export default function SummarizerWidget({
                           <Icon size={18} />
                         </span>
                         <div className="group/tooltip relative">
-                           <div className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 transition cursor-help dark:text-slate-500 dark:hover:text-white">
-                             <span className="font-serif italic border border-slate-300 dark:border-slate-600 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">i</span>
+                           <div className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-orange-50 dark:hover:bg-white/10 transition cursor-help">
+                             <span className="font-serif italic border-2 border-slate-400 dark:border-slate-500 text-slate-500 dark:text-slate-400 hover:border-orange-500 hover:text-orange-600 dark:hover:text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] transition">
+                               i
+                             </span>
                            </div>
-                           <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-64 opacity-0 scale-95 origin-top-right lg:origin-top-left transition-all group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 pointer-events-none group-hover/tooltip:pointer-events-auto rounded-xl bg-slate-900 border border-slate-800 p-3 shadow-xl dark:bg-slate-800 dark:border-slate-700">
-                             <p className="text-xs text-slate-300 leading-relaxed font-normal">{model.description}</p>
+                           <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-64 opacity-0 scale-95 origin-top-right lg:origin-top-left transition-all group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 pointer-events-none group-hover/tooltip:pointer-events-auto rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 shadow-xl">
+                             <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">{model.description}</p>
                            </div>
                         </div>
                       </div>
