@@ -1,3 +1,12 @@
+---
+title: CUD Traffic AI
+emoji: 🚦
+colorFrom: yellow
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 # CUD - AAI - Midterm Project - Traffic Incident Summarization
 
 This repo compares extractive and abstractive summarization methods for traffic incident reports and ships with a polished React + FastAPI demo.
