@@ -1,0 +1,7 @@
+incident_id,country,emirate,district,road_name,event_time,incident_type,severity,vehicles_involved,injury_level,lane_status,weather,consequence
+DXB-001,United Arab Emirates,Dubai,Business Bay,Sheikh Zayed Road,2026-02-14 18:10,Rear-end collision,High,3,Minor injuries,Two lanes blocked,Clear,heavy corridor congestion
+DXB-002,United Arab Emirates,Dubai,Al Barsha,Hessa Street,2026-02-18 08:25,Multi-vehicle crash,Medium,4,No major injuries,One lane blocked,Hazy,slow eastbound movement
+DXB-003,United Arab Emirates,Dubai,Deira,Al Ittihad Road,2026-02-19 21:05,Vehicle breakdown,Low,1,None,Shoulder occupied,Clear,localized delays
+DXB-004,United Arab Emirates,Dubai,Downtown Dubai,Financial Centre Road,2026-02-20 17:40,Side-impact collision,High,2,Moderate injuries,Intersection partially closed,Clear,signalized junction delays
+DXB-005,United Arab Emirates,Dubai,Jebel Ali,Sheikh Mohammed Bin Zayed Road,2026-02-22 06:50,Truck rollover,Critical,1,Serious injuries,Three lanes blocked,Windy,major freight disruption
+DXB-006,United Arab Emirates,Dubai,Al Qusais,Beirut Street,2026-02-23 07:55,Pedestrian collision,High,1,Pedestrian injured,One lane blocked,Clear,school commute slowdown

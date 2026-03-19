@@ -1,0 +1,5 @@
+incident_id,country,emirate,district,road_name,event_time,incident_type,severity,vehicles_involved,injury_level,lane_status,weather,consequence
+AUH-001,United Arab Emirates,Abu Dhabi,Khalifa City,Abu Dhabi-Al Ain Road,2026-02-16 07:35,Rear-end collision,Medium,2,Minor injuries,One lane blocked,Clear,peak-hour slowdown
+AUH-002,United Arab Emirates,Abu Dhabi,Mussafah,Airport Road,2026-02-17 19:20,Vehicle fire,High,1,No reported injuries,Two lanes blocked,Clear,diversion toward industrial roads
+AUH-003,United Arab Emirates,Abu Dhabi,Yas Island,Yas Drive,2026-02-19 15:05,Chain collision,High,5,Moderate injuries,Two lanes blocked,Dusty,leisure district congestion
+AUH-004,United Arab Emirates,Abu Dhabi,Al Reem Island,Al Rayfah Street,2026-02-21 08:40,Bus breakdown,Low,1,None,Bus bay occupied,Clear,short transit delay

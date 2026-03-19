@@ -1,0 +1,5 @@
+incident_id,country,emirate,district,road_name,event_time,incident_type,severity,vehicles_involved,injury_level,lane_status,weather,consequence
+UAE-001,United Arab Emirates,Sharjah,Al Nahda,Al Ittihad Road,2026-02-11 09:10,Rear-end collision,Medium,2,Minor injuries,One lane blocked,Clear,delays toward Dubai border
+UAE-002,United Arab Emirates,Ajman,Al Jurf,Sheikh Ammar Bin Humaid Street,2026-02-12 13:35,Intersection crash,High,2,Moderate injuries,Intersection partially closed,Clear,signal cycle delays
+UAE-003,United Arab Emirates,Ras Al Khaimah,Al Dhait,Emirates Road,2026-02-13 22:15,Single-vehicle rollover,High,1,Serious injuries,One lane blocked,Foggy,nighttime queue formation
+UAE-004,United Arab Emirates,Fujairah,City Centre,Hamad Bin Abdullah Road,2026-02-14 17:05,Multi-vehicle crash,Medium,3,Minor injuries,Two lanes blocked,Clear,urban center congestion

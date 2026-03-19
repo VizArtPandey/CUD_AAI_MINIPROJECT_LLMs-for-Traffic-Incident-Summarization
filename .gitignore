@@ -13,8 +13,8 @@ node_modules/
 frontend/dist/
 data/raw/*
 !data/raw/.gitkeep
-data/raw/gcc/*.csv
-!data/raw/gcc/source_manifest.csv
+!data/raw/gcc/
+!data/raw/gcc/*.csv
 data/interim/*
 !data/interim/.gitkeep
 data/processed/*
