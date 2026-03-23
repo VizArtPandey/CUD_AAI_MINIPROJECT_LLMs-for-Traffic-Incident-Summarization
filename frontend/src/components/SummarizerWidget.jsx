@@ -121,7 +121,7 @@ export default function SummarizerWidget({
         {/* Input and Output Split Area */}
         <div className="grid gap-0 lg:grid-cols-2 flex-1">
            {/* LEFT PANE: INPUT */}
-           <div className="p-4 md:p-5 flex flex-col relative">
+           <div className="p-4 md:p-5 flex flex-col relative min-h-[320px]">
              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/[0.05] pb-2.5 mb-3">
                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Original Incident</h3>
                <span className="rounded-full bg-slate-100 dark:bg-white/[0.05] px-2.5 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.06]">
@@ -129,8 +129,7 @@ export default function SummarizerWidget({
                </span>
              </div>
              <textarea
-               className="w-full resize-none bg-transparent p-0 text-lg leading-[1.85] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-0"
-               rows={5}
+               className="w-full resize-none bg-transparent p-0 text-lg leading-[1.85] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-0 flex-1"
                placeholder="Paste a traffic incident report here, or click a sample on the right..."
                value={text}
                onChange={(e) => setText(e.target.value)}
@@ -146,7 +145,8 @@ export default function SummarizerWidget({
            </div>
 
            {/* RIGHT PANE: OUTPUT */}
-           <div className="p-4 md:p-5 flex flex-col relative border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-white/[0.05] bg-slate-50/50 dark:bg-white/[0.01] rounded-b-2xl lg:rounded-bl-none lg:rounded-tr-2xl">
+           <div className="p-4 md:p-5 flex flex-col relative border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-white/[0.05] bg-slate-50/50 dark:bg-white/[0.01] rounded-b-2xl lg:rounded-bl-none lg:rounded-tr-2xl min-h-[320px]">
+
              <div className="flex items-center justify-between border-b border-orange-300/40 dark:border-orange-400/20 pb-2.5 mb-3">
                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400">Generated Output · {modelChoice.replace(/_/g, ' ').toUpperCase()}</h3>
                {summary ? (
@@ -214,8 +214,9 @@ export default function SummarizerWidget({
                   return (
                     <button
                       key={model.id}
-                      onClick={() => setModelChoice(model.id)}
-                      className={`relative flex flex-col items-start rounded-xl border p-4 text-left transition-all ${cardCls}`}
+                      onClick={() => !loading && setModelChoice(model.id)}
+                      disabled={loading}
+                      className={`relative flex flex-col items-start rounded-xl border p-4 text-left transition-all ${cardCls} ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {isSelected && <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]" />}
                       <div className="flex w-full items-start justify-between mb-4">

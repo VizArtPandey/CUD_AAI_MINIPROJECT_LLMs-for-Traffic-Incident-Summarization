@@ -13,11 +13,7 @@ const FALLBACK_TEXT = {
 };
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(() => {
-    // Apply immediately — before first paint — so dark: variants work on load
-    document.documentElement.classList.add("dark");
-    return true;
-  });
+  const [isDark, setIsDark] = useState(true);
   const [datasetTrack, setDatasetTrack] = useState("gcc");
   const [text, setText] = useState(FALLBACK_TEXT.gcc);
   const [modelChoice, setModelChoice] = useState("bart_large_cnn");
@@ -29,51 +25,76 @@ export default function Home() {
   const datasetTrackRef = useRef(datasetTrack);
   const modelChoiceRef = useRef(modelChoice);
 
+  // Sync refs safely
   useEffect(() => { textRef.current = text; }, [text]);
   useEffect(() => { datasetTrackRef.current = datasetTrack; }, [datasetTrack]);
   useEffect(() => { modelChoiceRef.current = modelChoice; }, [modelChoice]);
 
-  // Keep dark class in sync when user toggles
+  // Initial dark mode setup (flicker-free)
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
+
   useEffect(() => {
+    const controller = new AbortController();
     let active = true;
+
     fetchSamples(datasetTrack)
       .then((items) => {
         if (!active) return;
         setSamples(items);
-        setText(items.length ? items[0].text : FALLBACK_TEXT[datasetTrack]);
+        // Only override if default or empty
+        setText((prev) => {
+            if (!prev || prev === FALLBACK_TEXT.gcc || prev === FALLBACK_TEXT.us || samples.some(s => s.text === prev)) {
+                return items.length ? items[0].text : FALLBACK_TEXT[datasetTrack];
+            }
+            return prev;
+        });
       })
-      .catch(() => {
-        if (!active) return;
+      .catch((err) => {
+        if (!active || err.name === 'AbortError') return;
         setSamples([]);
         setText(FALLBACK_TEXT[datasetTrack]);
       });
+
     setSummary("");
-    return () => { active = false; };
+    return () => { 
+        active = false;
+        controller.abort();
+    };
   }, [datasetTrack]);
 
-  const runSummarize = async (targetModelId) => {
+  const runSummarize = useCallback(async (targetModelId) => {
     const modelToUse = targetModelId || modelChoiceRef.current;
     const currentText = textRef.current;
     const currentTrack = datasetTrackRef.current;
+    
     if (!currentText || currentText.trim().length < 10) return;
+    
     setLoading(true);
     setSummary("");
+    
     try {
-      const data = await summarizeText({ text: currentText, model_choice: modelToUse, dataset_track: currentTrack });
+      const data = await summarizeText({ 
+        text: currentText, 
+        model_choice: modelToUse, 
+        dataset_track: currentTrack 
+      });
       setSummary(data.summary);
     } catch (error) {
       setSummary(`Error: ${error?.response?.data?.detail || error.message}`);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleSummarize = () => runSummarize();
-  const handleModelSelect = (modelId) => { setModelChoice(modelId); runSummarize(modelId); };
+  const handleSummarize = useCallback(() => runSummarize(), [runSummarize]);
+  const handleModelSelect = useCallback((modelId) => { 
+    setModelChoice(modelId); 
+    runSummarize(modelId); 
+  }, [runSummarize]);
+
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#060d1f] text-slate-900 dark:text-slate-200 transition-colors duration-300 pb-16 dark:bg-grid">
