@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchSamples, summarizeText } from "../api/client";
 import BatchUpload from "../components/BatchUpload";
 import DatasetToggle from "../components/DatasetToggle";
