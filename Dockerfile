@@ -3,7 +3,7 @@ FROM node:20-alpine AS build-step
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm install
+RUN npm ci --ignore-scripts
 
 COPY frontend/ ./
 RUN npm run build

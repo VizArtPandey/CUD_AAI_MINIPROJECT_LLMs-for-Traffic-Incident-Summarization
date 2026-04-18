@@ -13,7 +13,7 @@ const FALLBACK_TEXT = {
 };
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [datasetTrack, setDatasetTrack] = useState("gcc");
   const [text, setText] = useState(FALLBACK_TEXT.gcc);
   const [modelChoice, setModelChoice] = useState("bart_large_cnn");

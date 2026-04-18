@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
   // Use relative paths in production (Hugging Face) so it hits the same domain.
   // In local dev, continue reaching out to FastAPI on port 8000.
-  baseURL: import.meta.env.PROD ? "" : "http://127.0.0.1:8000"
+  baseURL: import.meta.env.PROD ? "" : "http://127.0.0.1:8001"
 });
 
 export async function summarizeText(payload) {
