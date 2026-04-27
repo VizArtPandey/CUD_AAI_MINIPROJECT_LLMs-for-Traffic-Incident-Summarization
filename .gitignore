@@ -26,3 +26,22 @@ data/processed/*
 *.ckpt
 *.gguf
 *.safetensors
+
+# LaTeX source & compiled output
+*.tex
+*.pdf
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.bcf
+*.run.xml
