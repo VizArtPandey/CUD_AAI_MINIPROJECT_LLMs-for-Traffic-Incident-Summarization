@@ -27,9 +27,7 @@
 % ── Layout tuning ────────────────────────────────────────────
 \tolerance=1000
 \hbadness=10000
-\def\IEEEkeywordsname{Keywords}
-% Compact section spacing
-\usepackage[compact]{titlesec}
+\def\IEEEkeywordsname{Keywords}  
 
 % ── Custom column type ───────────────────────────────────────
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
@@ -70,21 +68,62 @@ traffic incident summarization, abstractive summarization, transformer models, z
 \vspace{-1.5mm}
 
 Smart cities generate continuous streams of traffic incident reports for
-control rooms, dispatch, and mobility monitoring. These reports are too long for fast decision-making, yet dispatchers must scan lengthy narratives to find the incident type, road segment, closure status, and severity. Automatic summarization can bridge this gap. Extractive methods are simple but miss distributed facts; abstractive transformer models generate coherent summaries but may hallucinate unsafe details.
+control rooms, dispatch, and mobility monitoring. These reports contain useful
+operational details but are too long for fast decision-making. Dispatchers
+must scan lengthy narratives to find the incident type, affected segment,
+closure status, and severity. In dense urban systems, this
+delay creates friction between information availability and response action.
 
-\textbf{Contributions:}
-(1) A dataset of over 5,250 records combining US Accidents~\cite{moosavi2023} and Dubai Pulse~\cite{dubaipulse2023}, providing GCC regional grounding.
-(2) A zero-shot evaluation of BART, Flan-T5, and PEGASUS against TextRank using ROUGE and qualitative failure analysis.
-(3) A live comparison tool for applied smart mobility contexts.
+Automatic summarization can reduce this gap between report length and
+decision-critical content. Extractive methods are computationally simple
+and preserve source wording, but they often fail when important details
+are distributed across multiple sentences. Abstractive transformer models
+generate more coherent summaries by synthesizing information across the
+document, but they may also hallucinate unsupported facts, which is risky
+in safety-critical traffic operations.
+
+\textbf{This paper makes three contributions.}
+(1) A traffic incident summarization dataset of over 5,250 records is
+constructed by combining US Accidents~\cite{moosavi2023} and Dubai
+Pulse~\cite{dubaipulse2023} data, providing GCC regional grounding.
+(2) A zero-shot evaluation of BART, Flan-T5, and PEGASUS against
+TextRank is presented using both ROUGE and
+qualitative failure analysis. (3) A comparison tool is developed to
+evaluate summarization outputs in an applied smart mobility context.
 
 % ============================================================
 \section{Related Work}
 \vspace{-1.5mm}
 
-BART~\cite{lewis2020} uses denoising seq2seq pretraining for strong contextual modeling. T5~\cite{raffel2020} formulates all NLP tasks as text-to-text, making instruction-style summarization natural. PEGASUS~\cite{zhang2020} uses gap-sentence generation, a pretraining objective designed for summarization. TextRank is the extractive baseline, ranking sentences by graph centrality; it preserves factual wording and avoids hallucination but misses distributed facts. A key limitation of abstractive models is factual reliability: Maynez et al.\ showed that high ROUGE scores do not guarantee faithfulness. This is especially critical in traffic operations where wrong closure or injury information affects dispatch decisions.
+Transformer-based summarization models have significantly improved
+abstractive text generation over earlier sentence-ranking approaches.
+BART~\cite{lewis2020} uses a denoising sequence-to-sequence pretraining
+objective in which corrupted text is reconstructed, enabling strong
+contextual modeling across long inputs. T5~\cite{raffel2020} formulates
+all NLP tasks in a unified text-to-text paradigm, which makes
+instruction-style prompting natural for summarization. PEGASUS~\cite{zhang2020}
+introduces gap-sentence generation, a pretraining objective specifically
+designed for summarization tasks, and has shown strong performance on
+news benchmarks.
+
+TextRank remains an important extractive baseline.
+It ranks sentences using graph centrality derived from pairwise sentence
+similarity. It offers a useful reference because it preserves factual wording from the source and avoids generation-specific errors such as hallucination.
+
+A key limitation of abstractive summarization is factual reliability.
+Maynez et al. showed that strong ROUGE performance does
+not guarantee faithfulness, as models may produce summaries with high
+n-gram overlap while still introducing unsupported details. This issue is
+especially important in traffic operations, where incorrect closure,
+injury, or incident status information may affect dispatch decisions,
+rerouting logic, and public communication.
 
 \textbf{Proposed Approach.}
-This study adopts a zero-shot framework evaluating BART, Flan-T5, and PEGASUS against TextRank. In addition to ROUGE, qualitative failure analysis captures hallucination, omission, and over-compression errors, making the evaluation suitable for safety-critical deployments.
+Based on these gaps, this study adopts a zero-shot framework
+evaluating BART, Flan-T5, and PEGASUS against TextRank on traffic reports. In addition to ROUGE
+metrics, qualitative failure analysis captures hallucination, omission, and over-compression errors. This makes
+the evaluation more suitable for safety-critical operations,
+where lexical overlap alone is insufficient to judge deployment readiness.
 
 % ============================================================
 \section{Methodology}
@@ -120,7 +159,11 @@ a summarization-specialized model trained with a gap-sentence objective,
 providing an additional abstractive comparison point. TextRank served as
 the extractive baseline.
 
-Inputs were truncated to 512 tokens; beam size 2, length penalty 1.0, max-new-tokens 72, min-new-tokens 18, no-repeat-ngram-size 3. ROUGE metrics were computed using the rouge-score library with stemming. Execution times were recorded on a standard cloud GPU environment.
+Inputs were truncated to 512 tokens. Shared generation parameters were:
+beam size 2, length penalty 1.0, max-new-tokens 72, min-new-tokens 18,
+and no-repeat-ngram-size 3. These settings were chosen to encourage
+compact summaries while reducing repetitive generation. ROUGE metrics
+were computed using the rouge-score library with stemming. To evaluate the reliability of each model for real-time deployment, execution times were also recorded on a standard cloud GPU environment.
 
 % ============================================================
 \section{Experimental Results and Analysis}
@@ -166,62 +209,68 @@ TextRank & 0.318 & 0.109 & 0.287 & 2.8x & --- & \textbf{0.05} \\
 {\small\textit{R-1 = ROUGE-1, R-2 = ROUGE-2, R-L = ROUGE-L, CR = Compression Ratio, Exec.(s) = Exec. Time per record.}}
 \end{table}
 
-All abstractive models outperform TextRank. BART performs best on lexical metrics, while Flan-T5 offers a faster (0.28 s/record) trade-off for time-sensitive deployments versus BART's 1.42 s/record. PEGASUS produces over-compressed outputs less suited to multi-fact traffic reporting.
+All abstractive models outperform TextRank, indicating that synthesis
+across sentences improves summary quality for traffic reports. BART
+performs best because incident reports share structural characteristics
+with event-oriented news text. However, for real-time traffic applications, execution time is a critical factor. While BART offers the highest summarization quality, it requires approximately 1.42 seconds per record. In contrast, Flan-T5 achieves competitive results while operating much faster (0.28 seconds), offering a highly reliable trade-off for time-sensitive deployments. PEGASUS produces shorter headline-like outputs that may be less aligned with multi-fact traffic reporting requirements.
 
 \textbf{Error Analysis.}
-BART hallucinates details in $\approx$14\% of outputs (e.g., fabricating injury counts); mitigation includes constraint-based decoding or factuality checks. Flan-T5 omits road closure information in $\approx$11\% of cases. PEGASUS over-compresses, removing location or response details. TextRank avoids hallucination but misses facts distributed across multiple sentences.
+A qualitative review of a stratified sample showed that BART introduces
+hallucinated details in approximately 14\% of outputs. For example, it occasionally fabricates injury counts (e.g., stating "3 injuries" when the source only reports a minor collision). To mitigate this, operators could use constraint-based decoding or post-generation factuality checks. Flan-T5 omits road closure information in
+approximately 11\% of cases. PEGASUS tends to over-compress summaries,
+removing location or response details. TextRank avoids hallucination but
+fails to capture information when the most important facts are
+distributed across multiple sentences.
 
-ROUGE alone is insufficient for safety-critical systems. Future evaluations should incorporate BERTScore or similar semantic metrics, and hybrid extractive-abstractive designs to balance factual grounding and fluency.
+These results demonstrate that ROUGE alone is insufficient for
+evaluating summarization in safety-critical systems. A model that scores
+well lexically may still omit or invent critical operational details.
+Therefore, future assessments should incorporate semantic metrics such as BERTScore or similar methods, which evaluate underlying meaning rather than strict n-gram overlap. This also motivates exploring hybrid
+extractive-abstractive designs that balance factual grounding and
+fluency.
 
 % ============================================================
 \section{Conclusion}
 \vspace{-1mm}
 
-This study evaluates transformer-based summarization for traffic incident reports. BART achieves the best ROUGE performance but hallucinates in $\approx$14\% of outputs. Future systems should combine extractive grounding with abstractive generation, domain-specific fine-tuning, Arabic-language support for GCC, and semantic evaluation via BERTScore.
+This study evaluates transformer-based summarization models for traffic
+incident reports in a smart mobility setting. While BART achieves the
+best ROUGE performance, qualitative analysis highlights limitations in
+factual reliability that remain important for deployment-oriented use.
+These findings suggest that future systems should combine extractive
+grounding with abstractive generation, alongside stronger factuality
+checks. Future work includes domain-specific fine-tuning,
+Arabic-language support for GCC deployments, and larger-scale evaluation
+across more geographically diverse incident corpora.
 
-\vspace{-1mm}
-\section*{Code \& Demo}
-Code: GitHub (VizArtPandey/CUD\_AAI\_MINIPROJECT\_LLMs-for-Traffic-Incident-Summarization). Demo: Hugging Face Spaces (rajvivan/CUD-Traffic-AI).
+\section*{Code Availability}
+The source code and dataset are available on GitHub (VizArtPandey/CUD\_AAI\_MINIPROJECT\_LLMs-for-Traffic-Incident-Summarization).
+A live demo is accessible at Hugging Face Spaces (rajvivan/CUD-Traffic-AI).
 
 % ============================================================
-\vspace{-2mm}
+\vspace{-3mm}
 \begin{thebibliography}{7}
 \footnotesize
-
 \bibitem{lewis2020}
-M.~Lewis, Y.~Liu, N.~Goyal, M.~Ghazvininejad, A.~Mohamed, O.~Levy,
-V.~Stoyanov, and L.~Zettlemoyer,
-``BART: Denoising Sequence-to-Sequence Pre-training for Natural Language
-Generation, Translation, and Comprehension,''
-in \textit{Proc.\ 58th Annu.\ Meeting ACL}, Online, 2020, pp.\ 7871--7880.
-
+M.~Lewis et al.,
+``BART: Denoising Seq2Seq Pre-training for NLG, Translation, and Comprehension,''
+in \textit{Proc.\ ACL}, 2020, pp.\ 7871--7880.
 \bibitem{raffel2020}
-C.~Raffel, N.~Shazeer, A.~Roberts, K.~Lee, S.~Narang, M.~Matena,
-Y.~Zhou, W.~Li, and P.~J.~Liu,
-``Exploring the Limits of Transfer Learning with a Unified
-Text-to-Text Transformer,''
+C.~Raffel et al.,
+``Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer,''
 \textit{J.\ Mach.\ Learn.\ Res.}, vol.~21, no.~140, pp.~1--67, 2020.
-
 \bibitem{zhang2020}
 J.~Zhang, Y.~Zhao, M.~Saleh, and P.~J.~Liu,
-``PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive
-Summarization,''
-in \textit{Proc.\ ICML}, Vienna, 2020, pp.~11328--11339.
-
+``PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization,''
+in \textit{Proc.\ ICML}, 2020, pp.~11328--11339.
 \bibitem{moosavi2023}
 S.~Moosavi Nezhad Asl,
 ``US Accidents: A Countrywide Traffic Accident Dataset (2016--2023),''
-Kaggle, 2023. [Online]. Available:
-\url{https://www.kaggle.com/datasets/sobhanmoosavi/us-accidents}
-
-
-
+Kaggle, 2023. [Online]. Available: \url{https://kaggle.com/datasets/sobhanmoosavi/us-accidents}
 \bibitem{dubaipulse2023}
 Dubai Statistics Center,
 ``Dubai Pulse Open Data Portal,''
-Government of Dubai, 2023. [Online]. Available:
-\url{https://www.dubaipulse.gov.ae}
-
+Govt.\ of Dubai, 2023. [Online]. Available: \url{https://www.dubaipulse.gov.ae}
 \end{thebibliography}
 
 \end{document}
