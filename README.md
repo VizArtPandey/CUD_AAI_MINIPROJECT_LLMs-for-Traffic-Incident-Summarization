@@ -1,11 +1,4 @@
----
-title: CUD Traffic AI
-emoji: 🚦
-colorFrom: yellow
-colorTo: red
-sdk: docker
-pinned: false
----
+
 
 <div align="center">
 
